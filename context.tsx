@@ -56,41 +56,38 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
     let totalOutput = 0
     let totalCacheRead = 0
     let totalCost = 0
-    let latestInput = 0
-    let latestOutput = 0
     let lastModelID = ""
     let lastProviderID = ""
+    let lastMsg = null
 
     for (const [idx, msg] of messages.entries()) {
       if (msg.role !== "assistant") continue
-      const input = toNumber(msg.tokens.input)
-      const output = toNumber(msg.tokens.output)
-      const cacheRead = toNumber(msg.tokens.cache.read)
-      const cost = toNumber(msg.cost)
 
-      logContext("message", {
-        idx,
-        id: msg.id,
-        role: msg.role,
-        providerID: msg.providerID,
-        modelID: msg.modelID,
-        input,
-        output,
-        cacheRead,
-        cost,
+      // Track the latest valid message for model info and cumulative totals
+      if (msg.providerID && msg.modelID && (msg.tokens.input > 0 || msg.tokens.output > 0)) {
+        lastMsg = msg
+        lastModelID = msg.modelID
+        lastProviderID = msg.providerID
+      }
+    }
+
+    // Use cumulative totals from the latest message (includes full context window)
+    if (lastMsg) {
+      totalInput = toNumber(lastMsg.tokens.total) || toNumber(lastMsg.tokens.input)
+      totalOutput = toNumber(lastMsg.tokens.output)
+      totalCacheRead = toNumber(lastMsg.tokens.cache?.read)
+      totalCost = toNumber(lastMsg.cost)
+
+      logContext("latestMessage", {
+        id: lastMsg.id,
+        providerID: lastMsg.providerID,
+        modelID: lastMsg.modelID,
+        tokens: lastMsg.tokens,
+        totalInput,
+        totalOutput,
+        totalCacheRead,
+        totalCost,
       })
-
-      totalInput += input
-      totalOutput += output
-      totalCacheRead += cacheRead
-      totalCost += cost
-
-      if (!msg.providerID || !msg.modelID) continue
-      if (input <= 0 && output <= 0) continue
-      latestInput = input
-      latestOutput = output
-      lastModelID = msg.modelID
-      lastProviderID = msg.providerID
     }
 
     let contextLimit = 0
@@ -133,8 +130,6 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
     const cacheRatio = totalInput > 0 ? Math.min(1, totalCacheRead / totalInput) : 0
 
     logContext("recompute:summary", {
-      latestInput,
-      latestOutput,
       totalInput,
       totalOutput,
       totalCacheRead,
@@ -150,10 +145,9 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
     })
 
     return {
-      latestInput,
-      latestOutput,
       totalInput,
       totalOutput,
+      totalCacheRead,
       totalCost,
       contextLimit,
       outputLimit,
