@@ -491,29 +491,6 @@ const tui: TuiPlugin = async (api, options) => {
     tips = false
   }
 
-  let context = false
-  const disableContext = async () => {
-    if (context) return
-    const item = api.plugins.list().find((entry) => entry.id === "internal:sidebar-context")
-    if (!item?.enabled || !item.active) return
-    const ok = await api.plugins.deactivate("internal:sidebar-context")
-    if (!ok) return
-    context = true
-  }
-
-  const restoreContext = async () => {
-    if (!context) return
-    const ok = await api.plugins.activate("internal:sidebar-context")
-    if (!ok) {
-      api.ui.toast({
-        variant: "warning",
-        message: "Failed to restore default sidebar context.",
-      })
-      return
-    }
-    context = false
-  }
-
   const write = (key: Field, next: unknown) => {
     api.kv.set(settingKey[key], next)
   }
@@ -575,14 +552,6 @@ const tui: TuiPlugin = async (api, options) => {
         void restoreTips()
       }
     }
-
-    if (key === "sidebar") {
-      if (state.sidebar) {
-        void disableContext()
-      } else {
-        void restoreContext()
-      }
-    }
   }
 
   const flip = (key: ToggleField) => {
@@ -606,9 +575,7 @@ const tui: TuiPlugin = async (api, options) => {
   if (value().tips) {
     await disableTips()
   }
-  if (value().sidebar) {
-    await disableContext()
-  }
+  await api.plugins.deactivate("internal:sidebar-context")
   applyScan()
 
   const nuke = createNukeCommand(api)
@@ -644,7 +611,6 @@ const tui: TuiPlugin = async (api, options) => {
   api.lifecycle.onDispose(async () => {
     nuke.dispose()
     await restoreTips()
-    await restoreContext()
     if (post) {
       api.renderer.removePostProcessFn(post)
     }
