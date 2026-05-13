@@ -2,7 +2,7 @@
 /** @jsxImportSource @opentui/solid */
 import { TargetChannel, VignetteEffect } from "@opentui/core"
 import { useTerminalDimensions } from "@opentui/solid"
-import type { TuiPlugin, TuiPluginModule, TuiSlotPlugin, TuiThemeCurrent } from "@opencode-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi, TuiPluginModule, TuiSlotPlugin, TuiThemeCurrent } from "@opencode-ai/plugin/tui"
 import { Show, createMemo, createSignal } from "solid-js"
 import {
   SettingsDialog,
@@ -19,6 +19,11 @@ import { Side } from "./side"
 import { Tips } from "./tips"
 
 const id = "vault-tec"
+
+const command = {
+  settings: "vault-tec.settings",
+  tipsToggle: "vault-tec.tips.toggle",
+}
 
 const home = [
   "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⡶⠶⠶⢶⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
@@ -104,7 +109,7 @@ type Cfg = {
   theme: string
 } & SettingsState
 
-type Api = Parameters<TuiPlugin>[0]
+type Api = TuiPluginApi
 
 const settingKey = createSettingKey(id)
 
@@ -486,6 +491,29 @@ const tui: TuiPlugin = async (api, options) => {
     tips = false
   }
 
+  let context = false
+  const disableContext = async () => {
+    if (context) return
+    const item = api.plugins.list().find((entry) => entry.id === "internal:sidebar-context")
+    if (!item?.enabled || !item.active) return
+    const ok = await api.plugins.deactivate("internal:sidebar-context")
+    if (!ok) return
+    context = true
+  }
+
+  const restoreContext = async () => {
+    if (!context) return
+    const ok = await api.plugins.activate("internal:sidebar-context")
+    if (!ok) {
+      api.ui.toast({
+        variant: "warning",
+        message: "Failed to restore default sidebar context.",
+      })
+      return
+    }
+    context = false
+  }
+
   const write = (key: Field, next: unknown) => {
     api.kv.set(settingKey[key], next)
   }
@@ -547,6 +575,14 @@ const tui: TuiPlugin = async (api, options) => {
         void restoreTips()
       }
     }
+
+    if (key === "sidebar") {
+      if (state.sidebar) {
+        void disableContext()
+      } else {
+        void restoreContext()
+      }
+    }
   }
 
   const flip = (key: ToggleField) => {
@@ -570,38 +606,45 @@ const tui: TuiPlugin = async (api, options) => {
   if (value().tips) {
     await disableTips()
   }
-  await api.plugins.deactivate("internal:sidebar-context")
+  if (value().sidebar) {
+    await disableContext()
+  }
   applyScan()
 
   const nuke = createNukeCommand(api)
 
-  api.command.register(() => [
-    {
-      title: "Vault-Tec settings",
-      value: "vault-tec.settings",
-      category: "System",
-      onSelect() {
-        showSettings()
+  api.keymap.registerLayer({
+    commands: [
+      {
+        name: command.settings,
+        title: "Vault-Tec settings",
+        category: "System",
+        namespace: "palette",
+        run() {
+          showSettings()
+        },
       },
-    },
-    {
-      title: api.kv.get("tips_hidden", false) ? "Show tips" : "Hide tips",
-      value: "tips.toggle",
-      keybind: "tips_toggle",
-      category: "System",
-      hidden: api.route.current.name !== "home" || !value().tips,
-      onSelect() {
-        if (!value().tips) return
-        api.kv.set("tips_hidden", !api.kv.get("tips_hidden", false))
-        api.ui.dialog.clear()
+      {
+        name: command.tipsToggle,
+        title: "Toggle tips",
+        category: "System",
+        namespace: "palette",
+        enabled: () => api.route.current.name === "home" && value().tips,
+        run() {
+          if (!value().tips) return
+          api.kv.set("tips_hidden", !api.kv.get("tips_hidden", false))
+          api.ui.dialog.clear()
+        },
       },
-    },
-    nuke.command,
-  ])
+      nuke.command,
+    ],
+    bindings: api.tuiConfig.keybinds.get("tips.toggle").map((item) => ({ ...item, cmd: command.tipsToggle })),
+  })
 
   api.lifecycle.onDispose(async () => {
     nuke.dispose()
     await restoreTips()
+    await restoreContext()
     if (post) {
       api.renderer.removePostProcessFn(post)
     }

@@ -1,9 +1,9 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import type { TuiThemeCurrent, TuiPlugin } from "@opencode-ai/plugin/tui"
+import type { TuiPluginApi, TuiThemeCurrent } from "@opencode-ai/plugin/tui"
 import { createMemo, createSignal, Show } from "solid-js"
 
-type Api = Parameters<TuiPlugin>[0]
+type Api = TuiPluginApi
 
 const bar = (ratio: number, width: number): string => {
   const r = Math.max(0, Math.min(1, ratio))

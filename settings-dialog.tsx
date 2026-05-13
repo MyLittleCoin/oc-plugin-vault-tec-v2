@@ -1,10 +1,10 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
 import { useKeyboard } from "@opentui/solid"
-import type { TuiPlugin } from "@opencode-ai/plugin/tui"
+import type { TuiPluginApi } from "@opencode-ai/plugin/tui"
 import { createMemo, createSignal } from "solid-js"
 
-type Api = Parameters<TuiPlugin>[0]
+type Api = TuiPluginApi
 
 export type SettingsState = {
   set: boolean
@@ -113,6 +113,7 @@ export const SettingsDialog = (props: {
 }) => {
   const [cur, setCur] = createSignal<Field>(rows[0]?.key ?? "set")
   const theme = createMemo(() => props.api.theme.current)
+  const DialogSelect = props.api.ui.DialogSelect
 
   const current = createMemo(() => settingByField[cur()] ?? settingByField.set)
   const options = createMemo(() => {
@@ -152,7 +153,7 @@ export const SettingsDialog = (props: {
 
   return (
     <box flexDirection="column">
-      <props.api.ui.DialogSelect
+      <DialogSelect
         title="Vault-Tec settings"
         placeholder="Filter settings"
         options={options()}

@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { TargetChannel } from "@opentui/core"
-import type { TuiPlugin } from "@opencode-ai/plugin/tui"
+import type { TuiPluginApi } from "@opencode-ai/plugin/tui"
 
-type Api = Parameters<TuiPlugin>[0]
+type Api = TuiPluginApi
 
 const FLASH_MATRIX = new Float32Array([0.9, 0.55, 0.2, 0.04, 0.65, 2.8, 0.65, 0.34, 0.2, 0.55, 0.9, 0.04, 0, 0, 0, 1])
 
@@ -523,12 +523,12 @@ export const createNukeCommand = (api: Api) => {
 
   return {
     command: {
-      title: "/nuke",
-      value: "/nuke",
-      slash: {
-        name: "nuke",
-      },
-      onSelect() {
+      name: "vault-tec.nuke",
+      title: "Nuke",
+      category: "Plugin",
+      namespace: "palette",
+      slashName: "nuke",
+      run() {
         run()
       },
     },
