@@ -4,7 +4,7 @@ import { TargetChannel, VignetteEffect } from "@opentui/core"
 import { useTerminalDimensions } from "@opentui/solid"
 import { Plugin, PluginContextProvider } from "@opencode/plugin/tui"
 import { safeTheme } from "./safe-plugin"
-import { Show, createMemo, createSignal } from "solid-js"
+import { Show, createMemo } from "solid-js"
 import {
   SettingsDialog,
   settingByField,
@@ -149,46 +149,34 @@ const clamp = (value: number, min: number, max: number) => {
   return value
 }
 
+// Rows reserved for the rest of the home screen (header bar, session list,
+// composer, builtin footer). Big logos only render when the terminal leaves
+// this much headroom above their height, so a small window keeps usable UI.
+const HOME_CHROME_ROWS = 15
+// Below this height not even the small logo fits next to the composer, and
+// below this width the 28-column small logo itself would wrap.
+const HOME_MIN_ROWS = 10
+const HOME_MIN_COLS = 32
+
 const Home = () => {
   const theme = safeTheme()
   const dim = useTerminalDimensions()
-  const [gap, setGap] = createSignal({ width: 0, height: 0 })
   const logo = createMemo(() => {
     const term = dim()
-    const chrome = gap()
-    const h = Math.max(0, term.height - chrome.height)
-    const w = Math.max(0, term.width - chrome.width)
-    if (h >= home2.length && w >= home2w) return home2
-    if (h >= home1.length && w >= home1w) return home1
+    if (term.height < HOME_MIN_ROWS || term.width < HOME_MIN_COLS) return []
+    if (term.height >= home2.length + HOME_CHROME_ROWS && term.width >= home2w) return home2
+    if (term.height >= home1.length + HOME_CHROME_ROWS && term.width >= home1w) return home1
     return home
   })
 
   return (
-    <box
-      onSizeChange={function () {
-        const term = dim()
-        const own = { width: this.width, height: this.height }
-        const next = {
-          width: Math.max(0, term.width - own.width),
-          height: Math.max(0, term.height - own.height),
-        }
-        const wide = own.width >= home1w
-        setGap((prev) => {
-          const nw = wide ? (prev.width > 0 ? Math.min(prev.width, next.width) : next.width) : prev.width
-          const nh = prev.height > 0 ? Math.min(prev.height, next.height) : next.height
-          if (prev.width === nw && prev.height === nh) return prev
-          return { width: nw, height: nh }
-        })
-      }}
-      flexDirection="column"
-      alignItems="center"
-    >
+    <box flexDirection="column" alignItems="center">
       {(() => {
         const lines = logo()
         const big = lines !== home
         return lines.map((line, i) => <text fg={big ? theme.text : i < 2 ? theme.textMuted : theme.text}>{line}</text>)
       })()}
-      <text fg={theme.textMuted}>VT-OS v0.4.3 :: Vault-Tec -- Preparing for the Future!</text>
+      <text fg={theme.textMuted}>VT-OS v0.4.4 :: Vault-Tec -- Preparing for the Future!</text>
     </box>
   )
 }

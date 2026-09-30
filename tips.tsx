@@ -92,10 +92,10 @@ export const Tips = () => {
   const show = createMemo(() => sessionCount() > 0 && !tipsState.hidden)
 
   return (
-    <box height={4} minHeight={0} width="100%" maxWidth={75} alignItems="center" paddingTop={3} flexShrink={1}>
-      <Show when={show()}>
+    <Show when={show()}>
+      <box height={1} minHeight={0} width="100%" maxWidth={75} alignItems="center" paddingTop={1} flexShrink={1}>
         <Roll />
-      </Show>
-    </box>
+      </box>
+    </Show>
   )
 }
