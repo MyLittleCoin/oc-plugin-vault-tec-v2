@@ -10,17 +10,42 @@ A Vault-Tec personality matrix that transforms your standard-issue coding termin
 
 ## Installation
 
-Install from the CLI:
+### From config (recommended)
 
-```bash
-opencode plugin oc-plugin-vault-tec
+Add the plugin to `opencode.json` (project or global, or `.opencode/opencode.json`):
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    {
+      "package": "github:MyLittleCoin/oc-plugin-vault-tec-v2",
+      "options": {
+        "enabled": true,
+        "mode": "append",
+      },
+    },
+  ],
+}
 ```
 
-Or from OpenCode commands:
+OpenCode clones the repository into its plugin cache and installs the dependencies automatically. Restart the TUI (or the server) to load it.
 
-1. Press `Ctrl+P`
-2. Select `Install Plugin`
-3. Enter `oc-plugin-vault-tec`
+### From the CLI
+
+```bash
+opencode plugin add github:MyLittleCoin/oc-plugin-vault-tec-v2
+```
+
+The in-app installer works the same way: press `Ctrl+P`, select `Install Plugin`, and paste the GitHub spec above.
+
+### Pinning a revision
+
+Any npm-compatible git spec is accepted:
+
+- `github:MyLittleCoin/oc-plugin-vault-tec-v2#main` — pin a branch or tag
+- `github:MyLittleCoin/oc-plugin-vault-tec-v2#<commit-sha>` — pin a commit
+- `git+ssh://git@github.com/MyLittleCoin/oc-plugin-vault-tec-v2.git#main`
 
 ## Options
 
@@ -30,7 +55,7 @@ Plugin options can be configured via `opencode.json(c)` under the `plugins` entr
 {
   "plugins": [
     {
-      "package": "oc-plugin-vault-tec",
+      "package": "github:MyLittleCoin/oc-plugin-vault-tec-v2",
       "options": {
         "enabled": true,
         "mode": "append",
