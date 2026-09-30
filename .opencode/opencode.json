@@ -1,11 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    [
-      "../",
-      {
+  "plugins": [
+    {
+      "package": "../",
+      "options": {
         "enabled": true
       }
-    ]
+    }
   ]
 }

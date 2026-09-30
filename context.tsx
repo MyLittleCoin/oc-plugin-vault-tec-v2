@@ -1,9 +1,7 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import type { TuiPluginApi, TuiThemeCurrent } from "@opencode-ai/plugin/tui"
+import { usePlugin } from "@opencode/plugin/tui"
 import { createMemo, createSignal, Show } from "solid-js"
-
-type Api = TuiPluginApi
 
 const bar = (ratio: number, width: number): string => {
   const r = Math.max(0, Math.min(1, ratio))
@@ -38,19 +36,13 @@ const toNumber = (value: unknown): number => {
   return Number.isFinite(value) ? value : 0
 }
 
-const logContext = (...args: unknown[]) => {
-  console.log("[PIPBOY][CTX]", ...args)
-}
+export const PipBoyContext = (props: { sessionId: string }) => {
+  const plugin = usePlugin()
+  const theme = plugin.theme
 
-export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; sessionId: string }) => {
   const [barWidth, setBarWidth] = createSignal(12)
   const data = createMemo(() => {
-    const messages = props.api.state.session.messages(props.sessionId)
-
-    logContext("recompute:start", {
-      sessionId: props.sessionId,
-      messageCount: messages.length,
-    })
+    const messages = plugin.data.session.message.list(props.sessionId) ?? []
 
     let totalInput = 0
     let totalOutput = 0
@@ -58,68 +50,45 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
     let totalCost = 0
     let lastModelID = ""
     let lastProviderID = ""
-    let lastMsg = null
+    let lastMsg: any = null
 
-    for (const [idx, msg] of messages.entries()) {
+    for (const msg of messages) {
       if (msg.role !== "assistant") continue
-
-      // Track the latest valid message for model info and cumulative totals
-      if (msg.providerID && msg.modelID && (msg.tokens.input > 0 || msg.tokens.output > 0)) {
+      if (msg.providerID && msg.modelID && (msg.tokens?.input > 0 || msg.tokens?.output > 0)) {
         lastMsg = msg
         lastModelID = msg.modelID
         lastProviderID = msg.providerID
       }
     }
 
-    // Use cumulative totals from the latest message (includes full context window)
     if (lastMsg) {
-      totalInput = toNumber(lastMsg.tokens.total) || toNumber(lastMsg.tokens.input)
-      totalOutput = toNumber(lastMsg.tokens.output)
-      totalCacheRead = toNumber(lastMsg.tokens.cache?.read)
+      totalInput = toNumber(lastMsg.tokens?.total) || toNumber(lastMsg.tokens?.input)
+      totalOutput = toNumber(lastMsg.tokens?.output)
+      totalCacheRead = toNumber(lastMsg.tokens?.cache?.read)
       totalCost = toNumber(lastMsg.cost)
-
-      logContext("latestMessage", {
-        id: lastMsg.id,
-        providerID: lastMsg.providerID,
-        modelID: lastMsg.modelID,
-        tokens: lastMsg.tokens,
-        totalInput,
-        totalOutput,
-        totalCacheRead,
-        totalCost,
-      })
     }
 
     let contextLimit = 0
     let outputLimit = 0
 
-    for (const provider of props.api.state.provider) {
-      const model = provider.id === lastProviderID ? provider.models[lastModelID] : undefined
+    const location = plugin.location ?? plugin.data.location.default()
+    const providers = plugin.data.location.provider.list(location) ?? []
+
+    for (const provider of providers) {
+      const model = provider.id === lastProviderID ? provider.models?.[lastModelID] : undefined
       if (model) {
-        contextLimit = model.limit.context
-        outputLimit = model.limit.output
-        logContext("provider:exact", {
-          providerID: provider.id,
-          modelID: lastModelID,
-          contextLimit,
-          outputLimit,
-        })
+        contextLimit = model.limit?.context ?? 0
+        outputLimit = model.limit?.output ?? 0
         break
       }
     }
 
     if (!contextLimit && lastModelID) {
-      for (const provider of props.api.state.provider) {
-        const model = provider.models[lastModelID]
+      for (const provider of providers) {
+        const model = provider.models?.[lastModelID]
         if (model) {
-          contextLimit = model.limit.context
-          outputLimit = model.limit.output
-          logContext("provider:scan", {
-            providerID: provider.id,
-            modelID: lastModelID,
-            contextLimit,
-            outputLimit,
-          })
+          contextLimit = model.limit?.context ?? 0
+          outputLimit = model.limit?.output ?? 0
           break
         }
       }
@@ -128,21 +97,6 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
     const contextRatio = contextLimit > 0 ? Math.min(1, totalInput / contextLimit) : 0
     const outputRatio = outputLimit > 0 ? Math.min(1, totalOutput / outputLimit) : 0
     const cacheRatio = totalInput > 0 ? Math.min(1, totalCacheRead / totalInput) : 0
-
-    logContext("recompute:summary", {
-      totalInput,
-      totalOutput,
-      totalCacheRead,
-      totalCost,
-      contextLimit,
-      outputLimit,
-      contextRatio,
-      outputRatio,
-      cacheRatio,
-      lastModelID,
-      lastProviderID,
-      hasData: totalInput > 0 || totalOutput > 0,
-    })
 
     return {
       totalInput,
@@ -160,9 +114,9 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
 
   const ctxColor = createMemo(() => {
     const r = data().contextRatio
-    if (r > 0.9) return props.theme.error
-    if (r > 0.7) return props.theme.warning
-    return props.theme.primary
+    if (r > 0.9) return theme.error
+    if (r > 0.7) return theme.warning
+    return theme.primary
   })
 
   const ctxInfo = createMemo(() => `${fmt(data().totalInput)} / ${fmt(data().contextLimit)} tokens`)
@@ -182,39 +136,39 @@ export const PipBoyContext = (props: { theme: TuiThemeCurrent; api: Api; session
         width="100%"
         flexDirection="column"
       >
-        <text fg={props.theme.primary}>
+        <text fg={theme.primary}>
           <b>PIP-BOY 3000 MKIV</b>
         </text>
         <Show when={data().contextLimit > 0}>
           <text>
-            <span style={{ fg: props.theme.textMuted }}>CTX </span>
+            <span style={{ fg: theme.textMuted }}>CTX </span>
             <span style={{ fg: ctxColor() }}>
               [{bar(data().contextRatio, fillWidth(barWidth(), "CTX ", ctxPct()))}]
             </span>
-            <span style={{ fg: props.theme.text }}>{ctxPct()}</span>
+            <span style={{ fg: theme.text }}>{ctxPct()}</span>
           </text>
-          <text fg={props.theme.textMuted}>{ctxInfo()}</text>
+          <text fg={theme.textMuted}>{ctxInfo()}</text>
         </Show>
         <Show when={data().outputLimit > 0}>
           <text>
-            <span style={{ fg: props.theme.textMuted }}>OUT </span>
-            <span style={{ fg: props.theme.primary }}>
+            <span style={{ fg: theme.textMuted }}>OUT </span>
+            <span style={{ fg: theme.primary }}>
               [{bar(data().outputRatio, fillWidth(barWidth(), "OUT ", outPct()))}]
             </span>
-            <span style={{ fg: props.theme.text }}>{outPct()}</span>
+            <span style={{ fg: theme.text }}>{outPct()}</span>
           </text>
-          <text fg={props.theme.textMuted}>{outInfo()}</text>
+          <text fg={theme.textMuted}>{outInfo()}</text>
         </Show>
         <text>
-          <span style={{ fg: props.theme.textMuted }}>CSH </span>
-          <span style={{ fg: props.theme.success }}>
+          <span style={{ fg: theme.textMuted }}>CSH </span>
+          <span style={{ fg: theme.success }}>
             [{bar(data().cacheRatio, fillWidth(barWidth(), "CSH ", cachePct()))}]
           </span>
-          <span style={{ fg: props.theme.text }}>{cachePct()}</span>
+          <span style={{ fg: theme.text }}>{cachePct()}</span>
         </text>
         <text>
-          <span style={{ fg: props.theme.textMuted }}>CAPS </span>
-          <span style={{ fg: props.theme.warning }}>{fmtCaps(data().totalCost)}</span>
+          <span style={{ fg: theme.textMuted }}>CAPS </span>
+          <span style={{ fg: theme.warning }}>{fmtCaps(data().totalCost)}</span>
         </text>
       </box>
     </Show>

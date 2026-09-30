@@ -1,10 +1,8 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
 import { useKeyboard } from "@opentui/solid"
-import type { TuiPluginApi } from "@opencode-ai/plugin/tui"
+import { usePlugin } from "@opencode/plugin/tui"
 import { createMemo, createSignal } from "solid-js"
-
-type Api = TuiPluginApi
 
 export type SettingsState = {
   set: boolean
@@ -85,17 +83,6 @@ const rows: SettingRow[] = [
 
 export const settingByField = Object.fromEntries(rows.map((item) => [item.key, item])) as Record<Field, SettingRow>
 
-export const createSettingKey = (id: string) => {
-  return {
-    set: `${id}.setting.set_theme`,
-    scan: `${id}.setting.scanlines`,
-    scanSpeed: `${id}.setting.scanline_speed`,
-    vignette: `${id}.setting.vignette`,
-    sidebar: `${id}.setting.sidebar`,
-    tips: `${id}.setting.tips`,
-  } as const
-}
-
 const status = (value: boolean) => {
   return value ? "ON" : "OFF"
 }
@@ -106,14 +93,14 @@ const metric = (value: SettingsState, key: NumberField) => {
 }
 
 export const SettingsDialog = (props: {
-  api: Api
   value: () => SettingsState
   flip: (key: ToggleField) => void
   tune: (key: NumberField, dir: -1 | 1) => void
 }) => {
+  const plugin = usePlugin()
+  const theme = plugin.theme
   const [cur, setCur] = createSignal<Field>(rows[0]?.key ?? "set")
-  const theme = createMemo(() => props.api.theme.current)
-  const DialogSelect = props.api.ui.DialogSelect
+  const DialogSelect = plugin.ui.DialogSelect
 
   const current = createMemo(() => settingByField[cur()] ?? settingByField.set)
   const options = createMemo(() => {
@@ -169,16 +156,16 @@ export const SettingsDialog = (props: {
       />
       <box paddingRight={2} paddingLeft={4} flexDirection="row" gap={2} paddingTop={1} paddingBottom={1} flexShrink={0}>
         <text>
-          <span style={{ fg: theme().text }}>
+          <span style={{ fg: theme.text }}>
             <b>toggle</b>{" "}
           </span>
-          <span style={{ fg: theme().textMuted }}>space enter left/right</span>
+          <span style={{ fg: theme.textMuted }}>space enter left/right</span>
         </text>
         <text>
-          <span style={{ fg: theme().text }}>
+          <span style={{ fg: theme.text }}>
             <b>adjust</b>{" "}
           </span>
-          <span style={{ fg: theme().textMuted }}>left/right</span>
+          <span style={{ fg: theme.textMuted }}>left/right</span>
         </text>
       </box>
     </box>

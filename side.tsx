@@ -1,6 +1,6 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import type { TuiThemeCurrent } from "@opencode-ai/plugin/tui"
+import { usePlugin } from "@opencode/plugin/tui"
 
 const side = [
   "⠀⠀⠀⠀⠀⠀⠀⠀⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀",
@@ -16,12 +16,13 @@ const side = [
   "⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
 ]
 
-export const Side = (props: { theme: TuiThemeCurrent }) => {
+export const Side = () => {
+  const theme = usePlugin().theme
   return (
     <box paddingLeft={1} paddingRight={1} alignItems="center">
       <box flexDirection="column">
         {side.map((line) => (
-          <text fg={props.theme.textMuted} selectable={false}>
+          <text fg={theme.textMuted} selectable={false}>
             {line}
           </text>
         ))}

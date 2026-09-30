@@ -1,6 +1,6 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import type { TuiThemeCurrent } from "@opencode-ai/plugin/tui"
+import { usePlugin } from "@opencode/plugin/tui"
 import { createMemo, For, Show } from "solid-js"
 
 type Part = {
@@ -65,27 +65,35 @@ const msgs = [
   "Prepare for the future: run {highlight}/help{/highlight} whenever keyboard protocol memory degrades.",
 ]
 
-const Roll = (props: { theme: TuiThemeCurrent }) => {
+const Roll = () => {
+  const theme = usePlugin().theme
   const list = createMemo(() => split(msgs[Math.floor(Math.random() * msgs.length)] ?? msgs[0]!))
   return (
     <box flexDirection="row" maxWidth="100%">
-      <text flexShrink={0} style={{ fg: props.theme.warning }}>
+      <text flexShrink={0} style={{ fg: theme.warning }}>
         ● Vault Tip{" "}
       </text>
       <text flexShrink={1}>
         <For each={list()}>
-          {(part) => <span style={{ fg: part.on ? props.theme.text : props.theme.textMuted }}>{part.text}</span>}
+          {(part) => <span style={{ fg: part.on ? theme.text : theme.textMuted }}>{part.text}</span>}
         </For>
       </text>
     </box>
   )
 }
 
-export const Tips = (props: { theme: TuiThemeCurrent; show: boolean }) => {
+export const Tips = () => {
+  const plugin = usePlugin()
+  const theme = plugin.theme
+
+  const [tipsState] = plugin.storage.memory("tips", { initial: { hidden: false } })
+  const sessionCount = createMemo(() => (plugin.data.session.list() ?? []).length)
+  const show = createMemo(() => sessionCount() > 0 && !tipsState.hidden)
+
   return (
     <box height={4} minHeight={0} width="100%" maxWidth={75} alignItems="center" paddingTop={3} flexShrink={1}>
-      <Show when={props.show}>
-        <Roll theme={props.theme} />
+      <Show when={show()}>
+        <Roll />
       </Show>
     </box>
   )

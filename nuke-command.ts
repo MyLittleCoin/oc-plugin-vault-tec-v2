@@ -1,11 +1,7 @@
 // @ts-nocheck
 import { TargetChannel } from "@opentui/core"
-import type { TuiPluginApi } from "@opencode-ai/plugin/tui"
-
-type Api = TuiPluginApi
 
 const FLASH_MATRIX = new Float32Array([0.9, 0.55, 0.2, 0.04, 0.65, 2.8, 0.65, 0.34, 0.2, 0.55, 0.9, 0.04, 0, 0, 0, 1])
-
 const CLOUD_HIDE_MATRIX = new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
 
 const FLASH_ONE_MS = 140
@@ -32,10 +28,10 @@ const MUSHROOM_CLOUD = [
   "⠀⠀⠀⠀⠀⣠⣴⣴⣦⣐⠰⢆⠀⠀⢀⣶⣖⣀⣈⡙⣿⣤⡇⠀⢶⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
   "⠀⠀⠀⢸⣿⡟⣟⣋⢻⣯⢛⣞⡙⣯⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣀⠘⣿⣧⡀⣀⣀⣀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀",
   "⠀⣠⣼⣿⣿⣷⣾⣿⣯⣿⣿⣿⣿⣟⡛⣭⣿⣽⢭⣫⣿⣿⣿⣿⣹⣷⡜⣿⡛⡛⠿⣿⣿⣿⣿⣿⣀⠀⠀⠀⠀⠀",
-  "⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣁⣉⣷⣿⣿⣿⣿⣷⣶⠀⠀⠀",
-  "⠀⠘⡿⣿⣿⣿⣿⣿⣿⣿⣯⣿⣿⣿⣿⣿⣿⣿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡄⠀",
+  "⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣁⣉⣷⣿⣿⣿⣿⣷⣶⠀⠀⠀",
+  "⠀⠘⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣯⣿⣿⣿⣿⣿⣿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡄⠀",
   "⢀⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡋⠀",
-  "⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄",
+  "⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄",
   "⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀",
   "⠀⠀⠉⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀",
   "⠀⠀⠀⠀⠉⠻⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠏⠉⠁⠀⠀⠀⠀",
@@ -47,7 +43,7 @@ const MUSHROOM_CLOUD = [
   "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
   "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣟⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
   "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠟⣿⡟⠁⢹⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣦⣴⣦⣀⣠⣴⣾⣿⣶⣿⣷⣿⣜⢻⣿⣿⣿⣿⣷⣷⣶⣶⣶⣶⣶⣶⣄⠀⠀⠀⠀⠀",
+  "⠀⠀⠀⠀⠀⠀⠀⠀⣰⣦⣴⣦⣀⣠⣴⣾⣿⣶⣿⣷⣿⣜⢻⣿⣿⣿⣿⣷⣷⣶⣶⣶⣶⣶⣶⣄⠀⠀⠀⠀⠀",
   "⠀⠀⠀⠀⠀⠠⣴⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⠀",
 ]
 
@@ -87,17 +83,8 @@ type LogoGlyph = {
   codePoint: number
 }
 
-const CLOUD_TOP = {
-  r: 0.2,
-  g: 1,
-  b: 0.2,
-}
-
-const CLOUD_BOTTOM = {
-  r: 0.08,
-  g: 0.48,
-  b: 0.09,
-}
+const CLOUD_TOP = { r: 0.2, g: 1, b: 0.2 }
+const CLOUD_BOTTOM = { r: 0.08, g: 0.48, b: 0.09 }
 
 const STEM_START_ROW = 0.66
 const TORUS_CENTER_ROW = 0.36
@@ -353,14 +340,11 @@ const createNukePostProcess = (onDone: () => void) => {
   }
 
   const glitchStrength = () => {
-    // Brief pulse during first flash
     if (elapsed < FLASH_ONE_MS) {
       return Math.sin(clamp01(elapsed / FLASH_ONE_MS) * Math.PI) * 0.15
     }
-    // Quiet during gap
     if (elapsed < FLASH_TWO_START_MS) return 0
 
-    // EMP: ramp during second flash attack, peak at cloud start, quadratic decay
     let emp = 0
     if (elapsed < CLOUD_FADE_START_MS) {
       emp = clamp01((elapsed - FLASH_TWO_START_MS) / FLASH_TWO_ATTACK_MS) * 0.85
@@ -369,7 +353,6 @@ const createNukePostProcess = (onDone: () => void) => {
       if (decay < 1) emp = (1 - decay) * (1 - decay) * 0.85
     }
 
-    // Periodic aftershocks — high-power sins for sharp deterministic spikes
     const t = elapsed * 0.001
     const s1 = Math.pow(Math.max(0, Math.sin(t * 1.7 + 0.3)), 14) * 0.25
     const s2 = Math.pow(Math.max(0, Math.sin(t * 2.3 - 1.1)), 18) * 0.2
@@ -394,18 +377,17 @@ const createNukePostProcess = (onDone: () => void) => {
       const effect = (rowHash >> 10) & 3
 
       if (effect <= 1) {
-        // Horizontal row displacement
         const maxShift = Math.ceil(strength * 5)
         const shift = ((rowHash >> 12) % (maxShift * 2 + 1)) - maxShift || 1
 
         if (shift > 0) {
           for (let x = width - 1; x >= shift; x--) {
-            const di = rowStart + x,
-              si = di - shift
+            const di = rowStart + x
+            const si = di - shift
             chars[di] = chars[si]
             attrs[di] = attrs[si]
-            const dc = di * 4,
-              sc = si * 4
+            const dc = di * 4
+            const sc = si * 4
             fg[dc] = fg[sc]
             fg[dc + 1] = fg[sc + 1]
             fg[dc + 2] = fg[sc + 2]
@@ -414,12 +396,12 @@ const createNukePostProcess = (onDone: () => void) => {
         } else {
           const s = -shift
           for (let x = 0; x < width - s; x++) {
-            const di = rowStart + x,
-              si = di + s
+            const di = rowStart + x
+            const si = di + s
             chars[di] = chars[si]
             attrs[di] = attrs[si]
-            const dc = di * 4,
-              sc = si * 4
+            const dc = di * 4
+            const sc = si * 4
             fg[dc] = fg[sc]
             fg[dc + 1] = fg[sc + 1]
             fg[dc + 2] = fg[sc + 2]
@@ -427,7 +409,6 @@ const createNukePostProcess = (onDone: () => void) => {
           }
         }
       } else if (effect === 2) {
-        // Scanline flash — bright green-biased line
         const boost = strength * 0.7
         for (let x = 0; x < width; x++) {
           const ci = (rowStart + x) * 4
@@ -436,7 +417,6 @@ const createNukePostProcess = (onDone: () => void) => {
           fg[ci + 2] = clamp01(fg[ci + 2] + boost * 0.4)
         }
       } else {
-        // Chromatic aberration — offset green channel by 2 cells
         for (let x = width - 1; x >= 2; x--) {
           fg[(rowStart + x) * 4 + 1] = fg[(rowStart + x - 2) * 4 + 1]
         }
@@ -497,18 +477,18 @@ const createNukePostProcess = (onDone: () => void) => {
   }
 }
 
-export const createNukeCommand = (api: Api) => {
+export const createNukeCommand = (context: any) => {
   let postProcess: ((buf: any, dt: number) => void) | undefined
   let requestedLive = false
 
   const stop = () => {
     if (postProcess) {
-      api.renderer.removePostProcessFn(postProcess)
+      context.renderer.removePostProcessFn(postProcess)
       postProcess = undefined
     }
 
     if (requestedLive) {
-      api.renderer.dropLive()
+      context.renderer.dropLive()
       requestedLive = false
     }
   }
@@ -516,18 +496,18 @@ export const createNukeCommand = (api: Api) => {
   const run = () => {
     stop()
     postProcess = createNukePostProcess(stop)
-    api.renderer.addPostProcessFn(postProcess)
-    api.renderer.requestLive()
+    context.renderer.addPostProcessFn(postProcess)
+    context.renderer.requestLive()
     requestedLive = true
   }
 
   return {
     command: {
-      name: "vault-tec.nuke",
+      id: "vault-tec.nuke",
       title: "Nuke",
-      category: "Plugin",
-      namespace: "palette",
-      slashName: "nuke",
+      group: "Plugin",
+      palette: true,
+      slash: { name: "nuke" },
       run() {
         run()
       },

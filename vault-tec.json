@@ -1,225 +1,249 @@
 {
   "$schema": "https://opencode.ai/theme.json",
-  "defs": {
-    "green": "#20C20E",
-    "greenBright": "#33FF33",
-    "greenDim": "#147A16",
-    "greenDark": "#0F6B0F",
-    "greenFaint": "#0A4A0A",
-    "greenMuted": "#2D8B2D",
-    "crtBlack": "#040D04",
-    "crtPanel": "#061206",
-    "crtElement": "#0A1A0A",
-    "crtBorder": "#0F2B0F"
-  },
-  "theme": {
-    "primary": {
-      "dark": "green",
-      "light": "green"
-    },
-    "secondary": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "accent": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "error": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "warning": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "success": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "info": {
-      "dark": "green",
-      "light": "green"
-    },
+  "base": {
+    "categorical": ["blue", "purple", "green", "orange", "red"],
     "text": {
-      "dark": "green",
-      "light": "green"
-    },
-    "textMuted": {
-      "dark": "greenDim",
-      "light": "greenDim"
+      "base": "$hue.neutral.200",
+      "muted": "$hue.neutral.400",
+      "action": {
+        "primary": {
+          "base": "$text.base",
+          "$disabled": "$hue.neutral.400",
+          "$focused": "$hue.neutral.800",
+          "$selected": "$hue.interactive.200"
+        },
+        "secondary": {
+          "base": "$text.muted",
+          "$hovered": "$text.base"
+        },
+        "destructive": {
+          "base": "$hue.neutral.800",
+          "$disabled": "$hue.neutral.400"
+        }
+      },
+      "formfield": {
+        "base": "$hue.neutral.200",
+        "$hovered": "$hue.interactive.200",
+        "$focused": "$hue.interactive.200",
+        "$pressed": "$hue.interactive.200",
+        "$disabled": "$hue.neutral.400",
+        "$selected": "$hue.interactive.200"
+      },
+      "feedback": {
+        "error": {
+          "base": "$hue.red.200"
+        },
+        "warning": {
+          "base": "#33FF33"
+        },
+        "success": {
+          "base": "$hue.green.200"
+        },
+        "info": {
+          "base": "$hue.cyan.200"
+        }
+      }
     },
     "background": {
-      "dark": "crtBlack",
-      "light": "crtBlack"
-    },
-    "backgroundPanel": {
-      "dark": "crtPanel",
-      "light": "crtPanel"
-    },
-    "backgroundElement": {
-      "dark": "crtElement",
-      "light": "crtElement"
-    },
-    "backgroundMenu": {
-      "dark": "crtElement",
-      "light": "crtElement"
-    },
-    "selectedListItemText": {
-      "dark": "crtBlack",
-      "light": "crtBlack"
+      "base": "$hue.neutral.800",
+      "raised": {
+        "base": "$hue.neutral.700",
+        "high": "$hue.neutral.600",
+        "max": "$hue.neutral.500"
+      },
+      "action": {
+        "primary": {
+          "base": "transparent",
+          "$hovered": "$hue.neutral.700",
+          "$focused": "$hue.interactive.200",
+          "$selected": "transparent"
+        },
+        "secondary": {
+          "base": "transparent"
+        },
+        "destructive": {
+          "base": "$hue.red.200"
+        }
+      },
+      "formfield": {
+        "base": "$background.base"
+      },
+      "feedback": {
+        "error": {
+          "base": "$background.base"
+        },
+        "warning": {
+          "base": "$background.base"
+        },
+        "success": {
+          "base": "$background.base"
+        },
+        "info": {
+          "base": "$background.base"
+        }
+      }
     },
     "border": {
-      "dark": "crtBorder",
-      "light": "crtBorder"
+      "base": "#0F2B0F"
     },
-    "borderActive": {
-      "dark": "green",
-      "light": "green"
+    "scrollbar": {
+      "base": "#0F2B0F"
     },
-    "borderSubtle": {
-      "dark": "crtElement",
-      "light": "crtElement"
+    "diff": {
+      "text": {
+        "added": "#33FF33",
+        "removed": "#147A16",
+        "context": "#0F6B0F",
+        "hunkHeader": "#2D8B2D"
+      },
+      "background": {
+        "added": "#061506",
+        "removed": "#061006",
+        "context": "$hue.neutral.700"
+      },
+      "highlight": {
+        "added": "#33FF33",
+        "removed": "#33FF33"
+      },
+      "lineNumber": {
+        "text": "#0A4A0A",
+        "background": {
+          "added": "#041004",
+          "removed": "#050D05"
+        }
+      }
     },
-    "diffAdded": {
-      "dark": "greenBright",
-      "light": "greenBright"
+    "syntax": {
+      "comment": "$hue.neutral.400",
+      "keyword": "$hue.accent.200",
+      "function": "$hue.interactive.200",
+      "variable": "$hue.red.200",
+      "string": "$hue.green.200",
+      "number": "#33FF33",
+      "type": "#33FF33",
+      "operator": "$hue.cyan.200",
+      "punctuation": "$hue.neutral.200"
     },
-    "diffRemoved": {
-      "dark": "greenDim",
-      "light": "greenDim"
+    "markdown": {
+      "text": "$hue.neutral.200",
+      "heading": "$hue.accent.200",
+      "link": "$hue.interactive.200",
+      "linkText": "$hue.cyan.200",
+      "code": "$hue.green.200",
+      "blockQuote": "#147A16",
+      "emphasis": "#33FF33",
+      "strong": "#33FF33",
+      "horizontalRule": "$hue.neutral.400",
+      "listItem": "$hue.interactive.200",
+      "listEnumeration": "$hue.cyan.200",
+      "image": "$hue.interactive.200",
+      "imageText": "$hue.cyan.200",
+      "codeBlock": "$hue.neutral.200"
     },
-    "diffContext": {
-      "dark": "greenDark",
-      "light": "greenDark"
-    },
-    "diffHunkHeader": {
-      "dark": "greenMuted",
-      "light": "greenMuted"
-    },
-    "diffHighlightAdded": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "diffHighlightRemoved": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "diffAddedBg": {
-      "dark": "#061506",
-      "light": "#061506"
-    },
-    "diffRemovedBg": {
-      "dark": "#061006",
-      "light": "#061006"
-    },
-    "diffContextBg": {
-      "dark": "crtPanel",
-      "light": "crtPanel"
-    },
-    "diffLineNumber": {
-      "dark": "greenFaint",
-      "light": "greenFaint"
-    },
-    "diffAddedLineNumberBg": {
-      "dark": "#041004",
-      "light": "#041004"
-    },
-    "diffRemovedLineNumberBg": {
-      "dark": "#050D05",
-      "light": "#050D05"
-    },
-    "markdownText": {
-      "dark": "green",
-      "light": "green"
-    },
-    "markdownHeading": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownLink": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownLinkText": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownCode": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownBlockQuote": {
-      "dark": "greenDim",
-      "light": "greenDim"
-    },
-    "markdownEmph": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownStrong": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownHorizontalRule": {
-      "dark": "greenDark",
-      "light": "greenDark"
-    },
-    "markdownListItem": {
-      "dark": "green",
-      "light": "green"
-    },
-    "markdownListEnumeration": {
-      "dark": "greenDim",
-      "light": "greenDim"
-    },
-    "markdownImage": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownImageText": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "markdownCodeBlock": {
-      "dark": "green",
-      "light": "green"
-    },
-    "syntaxComment": {
-      "dark": "greenDark",
-      "light": "greenDark"
-    },
-    "syntaxKeyword": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "syntaxFunction": {
-      "dark": "green",
-      "light": "green"
-    },
-    "syntaxVariable": {
-      "dark": "green",
-      "light": "green"
-    },
-    "syntaxString": {
-      "dark": "greenDim",
-      "light": "greenDim"
-    },
-    "syntaxNumber": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "syntaxType": {
-      "dark": "greenBright",
-      "light": "greenBright"
-    },
-    "syntaxOperator": {
-      "dark": "greenMuted",
-      "light": "greenMuted"
-    },
-    "syntaxPunctuation": {
-      "dark": "greenDark",
-      "light": "greenDark"
+    "@dialog": {
+      "background": {
+        "base": "$background.raised.base",
+        "action": {
+          "primary": {
+            "$hovered": "$background.raised.high"
+          }
+        }
+      }
+    }
+  },
+  "dark": {
+    "hue": {
+      "gray": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "red": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "orange": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "yellow": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "green": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "cyan": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "blue": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "purple": {
+        "100": "#33FF33",
+        "200": "#20C20E",
+        "300": "#2D8B2D",
+        "400": "#147A16",
+        "500": "#0F6B0F",
+        "600": "#0A1A0A",
+        "700": "#061206",
+        "800": "#040D04",
+        "900": "#030A03"
+      },
+      "accent": "$hue.green",
+      "interactive": "$hue.green",
+      "neutral": "$hue.green"
     }
   }
 }
