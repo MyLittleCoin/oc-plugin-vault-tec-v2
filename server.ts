@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { readFile } from "node:fs/promises"
 import { Plugin } from "@opencode/plugin"
+import { detectLocale, RU_DIRECTIVE } from "./locale"
 
 const id = "vault-tec"
 
@@ -63,12 +64,15 @@ export default Plugin.define({
     const value = cfg(rec(ctx.options), file || seed)
     if (!value.enabled) return
 
+    const locale = detectLocale(rec(ctx.options))
+    const prompt = locale === "ru" ? value.prompt + RU_DIRECTIVE : value.prompt
+
     await ctx.session.hook("context", (event) => {
       if (value.mode === "replace") {
         event.system.length = 0
       }
-      if (!event.system.some((s: { type: string; text: string }) => s.text === value.prompt)) {
-        event.system.push({ type: "text", text: value.prompt })
+      if (!event.system.some((s: { type: string; text: string }) => s.text === prompt)) {
+        event.system.push({ type: "text", text: prompt })
       }
     })
   },
