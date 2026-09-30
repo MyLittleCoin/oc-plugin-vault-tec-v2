@@ -2,7 +2,7 @@
 /** @jsxImportSource @opentui/solid */
 import { TargetChannel, VignetteEffect } from "@opentui/core"
 import { useTerminalDimensions } from "@opentui/solid"
-import { Plugin, usePlugin } from "@opencode/plugin/tui"
+import { Plugin, PluginContextProvider, usePlugin } from "@opencode/plugin/tui"
 import { Show, createMemo, createSignal } from "solid-js"
 import {
   SettingsDialog,
@@ -409,7 +409,11 @@ export default Plugin.define({
 
     const showSettings = () => {
       context.ui.dialog.show(
-        () => <SettingsDialog value={value} flip={flip} tune={tune} />,
+        () => (
+          <PluginContextProvider value={context}>
+            <SettingsDialog value={value} flip={flip} tune={tune} />
+          </PluginContextProvider>
+        ),
         () => context.ui.dialog.clear(),
       )
     }
@@ -465,14 +469,22 @@ export default Plugin.define({
 
     context.ui.slot({
       append: "home.footer",
-      render: () => <Home />,
+      render: () => (
+        <PluginContextProvider value={context}>
+          <Home />
+        </PluginContextProvider>
+      ),
     })
 
     context.ui.slot({
       append: "sidebar.content",
       render: () => {
         if (!value().sidebar) return null
-        return <Side />
+        return (
+          <PluginContextProvider value={context}>
+            <Side />
+          </PluginContextProvider>
+        )
       },
     })
 
@@ -482,7 +494,11 @@ export default Plugin.define({
         if (!value().sidebar) return null
         const sid = input?.sessionID
         if (!sid) return null
-        return <PipBoyContext sessionId={sid} />
+        return (
+          <PluginContextProvider value={context}>
+            <PipBoyContext sessionId={sid} />
+          </PluginContextProvider>
+        )
       },
     })
 
@@ -490,7 +506,11 @@ export default Plugin.define({
       append: "home.footer",
       render: () => {
         if (!value().tips) return null
-        return <Tips />
+        return (
+          <PluginContextProvider value={context}>
+            <Tips />
+          </PluginContextProvider>
+        )
       },
     })
 
