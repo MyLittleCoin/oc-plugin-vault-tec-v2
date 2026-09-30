@@ -47,6 +47,21 @@ Any npm-compatible git spec is accepted:
 - `github:MyLittleCoin/oc-plugin-vault-tec-v2#<commit-sha>` — pin a commit
 - `git+ssh://git@github.com/MyLittleCoin/oc-plugin-vault-tec-v2.git#main`
 
+### Updating
+
+```bash
+opencode plugin update github:MyLittleCoin/oc-plugin-vault-tec-v2
+```
+
+If the package cache was removed, force a reinstall with:
+
+```bash
+opencode plugin add github:MyLittleCoin/oc-plugin-vault-tec-v2
+```
+
+(`plugin add` always reinstalls, even when the plugin is already configured.)
+Restart the TUI afterwards — plugins are loaded once per client session.
+
 ## Options
 
 Plugin options can be configured via `opencode.json(c)` under the `plugins` entry:
