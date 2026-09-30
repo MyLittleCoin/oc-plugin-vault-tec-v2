@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kommander/oc-plugin-vault-tec.git"
+    "url": "git+https://github.com/MyLittleCoin/oc-plugin-vault-tec-v2.git"
   },
   "exports": {
     ".": "./server.ts",
