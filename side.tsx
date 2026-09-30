@@ -1,6 +1,6 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import { usePlugin } from "@opencode/plugin/tui"
+import { safeTheme } from "./safe-plugin"
 
 const side = [
   "⠀⠀⠀⠀⠀⠀⠀⠀⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀",
@@ -17,7 +17,7 @@ const side = [
 ]
 
 export const Side = () => {
-  const theme = usePlugin().theme
+  const theme = safeTheme()
   return (
     <box paddingLeft={1} paddingRight={1} alignItems="center">
       <box flexDirection="column">

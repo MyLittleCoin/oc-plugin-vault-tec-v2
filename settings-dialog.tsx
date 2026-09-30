@@ -1,7 +1,7 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
 import { useKeyboard } from "@opentui/solid"
-import { usePlugin } from "@opencode/plugin/tui"
+import { safePlugin } from "./safe-plugin"
 import { createMemo, createSignal } from "solid-js"
 
 export type SettingsState = {
@@ -97,7 +97,8 @@ export const SettingsDialog = (props: {
   flip: (key: ToggleField) => void
   tune: (key: NumberField, dir: -1 | 1) => void
 }) => {
-  const plugin = usePlugin()
+  const plugin = safePlugin()
+  if (!plugin) return null
   const theme = plugin.theme
   const [cur, setCur] = createSignal<Field>(rows[0]?.key ?? "set")
   const DialogSelect = plugin.ui.DialogSelect

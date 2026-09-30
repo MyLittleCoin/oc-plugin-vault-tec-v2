@@ -1,6 +1,6 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import { usePlugin } from "@opencode/plugin/tui"
+import { safePlugin } from "./safe-plugin"
 import { createMemo, createSignal, Show } from "solid-js"
 
 const bar = (ratio: number, width: number): string => {
@@ -37,7 +37,8 @@ const toNumber = (value: unknown): number => {
 }
 
 export const PipBoyContext = (props: { sessionId: string }) => {
-  const plugin = usePlugin()
+  const plugin = safePlugin()
+  if (!plugin) return null
   const theme = plugin.theme
 
   const [barWidth, setBarWidth] = createSignal(12)

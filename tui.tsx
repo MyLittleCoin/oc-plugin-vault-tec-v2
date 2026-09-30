@@ -2,7 +2,8 @@
 /** @jsxImportSource @opentui/solid */
 import { TargetChannel, VignetteEffect } from "@opentui/core"
 import { useTerminalDimensions } from "@opentui/solid"
-import { Plugin, PluginContextProvider, usePlugin } from "@opencode/plugin/tui"
+import { Plugin, PluginContextProvider } from "@opencode/plugin/tui"
+import { safeTheme } from "./safe-plugin"
 import { Show, createMemo, createSignal } from "solid-js"
 import {
   SettingsDialog,
@@ -143,7 +144,7 @@ const clamp = (value: number, min: number, max: number) => {
 }
 
 const Home = () => {
-  const theme = usePlugin().theme
+  const theme = safeTheme()
   const dim = useTerminalDimensions()
   const [gap, setGap] = createSignal({ width: 0, height: 0 })
   const logo = createMemo(() => {
@@ -181,6 +182,7 @@ const Home = () => {
         const big = lines !== home
         return lines.map((line, i) => <text fg={big ? theme.text : i < 2 ? theme.textMuted : theme.text}>{line}</text>)
       })()}
+      <text fg={theme.textMuted}>VT-OS v0.4.2 :: Vault-Tec -- Preparing for the Future!</text>
     </box>
   )
 }

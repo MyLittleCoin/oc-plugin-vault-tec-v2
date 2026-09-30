@@ -1,6 +1,6 @@
 // @ts-nocheck
 /** @jsxImportSource @opentui/solid */
-import { usePlugin } from "@opencode/plugin/tui"
+import { safePlugin, safeTheme } from "./safe-plugin"
 import { createMemo, For, Show } from "solid-js"
 
 type Part = {
@@ -66,7 +66,7 @@ const msgs = [
 ]
 
 const Roll = () => {
-  const theme = usePlugin().theme
+  const theme = safeTheme()
   const list = createMemo(() => split(msgs[Math.floor(Math.random() * msgs.length)] ?? msgs[0]!))
   return (
     <box flexDirection="row" maxWidth="100%">
@@ -83,7 +83,8 @@ const Roll = () => {
 }
 
 export const Tips = () => {
-  const plugin = usePlugin()
+  const plugin = safePlugin()
+  if (!plugin) return null
   const theme = plugin.theme
 
   const [tipsState] = plugin.storage.memory("tips", { initial: { hidden: false } })
